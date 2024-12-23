@@ -83,22 +83,27 @@
       width: 100px;
       height: 100px;
     }
+
+    footer {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #888;
+    }
   </style>
 </head>
 <body>
   <h1>Under Construction</h1>
   <h1>WeCreating Live Follower Count</h1>
+  <div id="userProfileInfo">
+    <div id="usernameDisplay"></div>
+  </div>
   <div class="container" id="followerContainer"></div>
 
   <label for="username">Input a username</label>
   <input id="username" type="text" placeholder="Enter username">
   <button id="getFollowerCountBtn" style="cursor: pointer;">Get Follower Count</button>
 
-  <div id="userProfileInfo">
-    <img id="profileImage" alt="Profile Image"/>
-    <div id="usernameDisplay"></div>
-    <div id="followersCountDisplay"></div>
-  </div>
+  
 
   <script>
     const followerContainer = document.getElementById('followerContainer');
