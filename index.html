@@ -112,57 +112,39 @@
     const followersCountDisplay = document.getElementById('followersCountDisplay');
     let currentFollowers = "0";
     const followerSound = document.getElementById('followerSound'); // Audio element
+    const milestoneSound = new Audio('https://wecreating-live-follower-cont.github.io/files/partyblower.mp3');
 
     // Function to render digits with animation
     function updateFollowerCount(newCount) {
       const newCountStr = newCount.toString();
-      const oldCountStr = currentFollowers.toString().padStart(newCountStr.length, "0");
-
       followerContainer.innerHTML = ""; // Clear existing digits
 
+      // Render the new follower count (as digits)
       for (let i = 0; i < newCountStr.length; i++) {
-        const newDigit = newCountStr[i];
-        const oldDigit = oldCountStr[i];
-
         const digitElement = document.createElement("div");
         digitElement.className = "digit";
-
         const topSpan = document.createElement("span");
         const bottomSpan = document.createElement("span");
-
+        
         topSpan.className = "top";
         bottomSpan.className = "bottom";
-
-        if (newDigit !== oldDigit) {
-          topSpan.textContent = oldDigit;
-          bottomSpan.textContent = newDigit;
-          setTimeout(() => {
-            topSpan.style.transform = "rotateX(-90deg)";
-            bottomSpan.style.transform = "rotateX(0deg)";
-          }, 50);
-          followerSound.play();// Add delay for smoothness
-        } else {
-          topSpan.textContent = newDigit;
-          bottomSpan.textContent = newDigit;
-          topSpan.style.transform = "rotateX(0deg)";
-          bottomSpan.style.transform = "rotateX(-90deg)";
-        }
-
+        
+        topSpan.textContent = newCountStr[i];
+        bottomSpan.textContent = newCountStr[i];
+        
+        topSpan.style.transform = "rotateX(0deg)";
+        bottomSpan.style.transform = "rotateX(-90deg)";
+        
         digitElement.appendChild(topSpan);
         digitElement.appendChild(bottomSpan);
         followerContainer.appendChild(digitElement);
       }
 
-      // Play the sound if the follower count increases
-      if (parseInt(newCount) > parseInt(currentFollowers)) {
-        
-      }
-
       currentFollowers = newCount;
     }
 
-    // Fetch profile info and follower count based on username
-    async function fetchProfileInfo() {
+    // Function to fetch the follower count and check for milestones
+    async function fetchFollowerCount() {
       const username = document.getElementById('username').value;
       if (!username) {
         alert("Please enter a username.");
@@ -170,27 +152,43 @@
       }
 
       const profileUrl = `https://wecreating1.wixsite.com/wecreating/profile/${username}/profile`;
-
       try {
         const followerResponse = await fetch(`http://localhost:3000/followers?username=${username}`);
         const followerData = await followerResponse.json();
         
-        // Update follower count
-        updateFollowerCount(followerData.followers);
-        usernameDisplayElement.textContent = `${username}'s Live Follower Count:`;
-        followersCountDisplay.textContent = `Followers: ${followerData.followers}`;
+        const newFollowerCount = followerData.followers;
+
+        // Update follower count and play milestone sounds
+        if (newFollowerCount !== currentFollowers) {
+          updateFollowerCount(newFollowerCount);
+
+          // Play regular sound if it's not a milestone
+          if (newFollowerCount % 100 !== 0) {
+            if (followerSound.paused) {
+              followerSound.play();
+            }
+          } 
+          // Play milestone sound when follower count reaches milestones
+          else {
+            if (milestoneSound.paused) {
+              milestoneSound.play();
+            }
+          }
+        }
+
+        usernameDisplayElement.textContent = `${username}'s Live Follower Count: ${newFollowerCount}`;
       } catch (error) {
         console.error("Error fetching profile info:", error);
       }
     }
 
     // Event listener for button click
-    document.getElementById('getFollowerCountBtn').addEventListener('click', fetchProfileInfo);
+    document.getElementById('getFollowerCountBtn').addEventListener('click', fetchFollowerCount);
 
     // Event listener for pressing Enter inside the username input field
     document.getElementById('username').addEventListener('keypress', function(event) {
       if (event.key === 'Enter') {
-        fetchProfileInfo();
+        fetchFollowerCount();
       }
     });
   </script>
@@ -198,6 +196,5 @@
   <footer>
     <p>This site is unofficial and not affiliated with WeCreating.</p>
   </footer>
-
 </body>
 </html>
