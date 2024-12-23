@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -103,7 +102,8 @@
   <input id="username" type="text" placeholder="Enter username">
   <button id="getFollowerCountBtn" style="cursor: pointer;">Get Follower Count</button>
 
-  
+  <!-- Audio element for the sound -->
+  <audio id="followerSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
 
   <script>
     const followerContainer = document.getElementById('followerContainer');
@@ -111,6 +111,7 @@
     const usernameDisplayElement = document.getElementById('usernameDisplay');
     const followersCountDisplay = document.getElementById('followersCountDisplay');
     let currentFollowers = "0";
+    const followerSound = document.getElementById('followerSound'); // Audio element
 
     // Function to render digits with animation
     function updateFollowerCount(newCount) {
@@ -151,6 +152,11 @@
         followerContainer.appendChild(digitElement);
       }
 
+      // Play the sound if the follower count increases
+      if (parseInt(newCount) > parseInt(currentFollowers)) {
+        followerSound.play();
+      }
+
       currentFollowers = newCount;
     }
 
@@ -187,8 +193,10 @@
       }
     });
   </script>
+
   <footer>
     <p>This site is unofficial and not affiliated with WeCreating.</p>
   </footer>
+
 </body>
 </html>
