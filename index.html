@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeCreating Live Follower Count</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #282c34;
+      color: white;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .container {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 80px;
+      font-weight: bold;
+      color: white;
+      background: #444;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    #followerContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: auto;
+      padding-right: 0px;
+      flex-wrap: wrap;
+      height: auto;
+    }
+
+    #followerContainer .digit {
+      overflow: visible;
+      overflow-x: visible;
+      overflow-y: visible;
+      position: relative;
+      width: 80px;
+      height: 100px;
+      margin: 0 8px;
+      perspective: 1000px;
+    }
+
+    .digit span {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      line-height: 100px;
+      text-align: center;
+      font-size: 80px;
+      font-weight: bold;
+      backface-visibility: hidden;
+      transform-origin: bottom;
+    }
+
+    .digit .top {
+      transform: rotateX(0deg);
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .digit .bottom {
+      transform: rotateX(-90deg);
+      transition: transform 0.5s ease-in-out;
+    }
+
+    #userProfileInfo {
+      margin-top: 20px;
+      font-size: 20px;
+      color: white;
+    }
+
+    #profileImage {
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Under Construction</h1>
+  <h1>WeCreating Live Follower Count</h1>
+  <div class="container" id="followerContainer"></div>
+
+  <label for="username">Input a username</label>
+  <input id="username" type="text" placeholder="Enter username">
+  <button id="getFollowerCountBtn" style="cursor: pointer;">Get Follower Count</button>
+
+  <div id="userProfileInfo">
+    <img id="profileImage" alt="Profile Image"/>
+    <div id="usernameDisplay"></div>
+    <div id="followersCountDisplay"></div>
+  </div>
+
+  <script>
+    const followerContainer = document.getElementById('followerContainer');
+    const profileImageElement = document.getElementById('profileImage');
+    const usernameDisplayElement = document.getElementById('usernameDisplay');
+    const followersCountDisplay = document.getElementById('followersCountDisplay');
+    let currentFollowers = "0";
+
+    // Function to render digits with animation
+    function updateFollowerCount(newCount) {
+      const newCountStr = newCount.toString();
+      const oldCountStr = currentFollowers.toString().padStart(newCountStr.length, "0");
+
+      followerContainer.innerHTML = ""; // Clear existing digits
+
+      for (let i = 0; i < newCountStr.length; i++) {
+        const newDigit = newCountStr[i];
+        const oldDigit = oldCountStr[i];
+
+        const digitElement = document.createElement("div");
+        digitElement.className = "digit";
+
+        const topSpan = document.createElement("span");
+        const bottomSpan = document.createElement("span");
+
+        topSpan.className = "top";
+        bottomSpan.className = "bottom";
+
+        if (newDigit !== oldDigit) {
+          topSpan.textContent = oldDigit;
+          bottomSpan.textContent = newDigit;
+          setTimeout(() => {
+            topSpan.style.transform = "rotateX(-90deg)";
+            bottomSpan.style.transform = "rotateX(0deg)";
+          }, 50); // Add delay for smoothness
+        } else {
+          topSpan.textContent = newDigit;
+          bottomSpan.textContent = newDigit;
+          topSpan.style.transform = "rotateX(0deg)";
+          bottomSpan.style.transform = "rotateX(-90deg)";
+        }
+
+        digitElement.appendChild(topSpan);
+        digitElement.appendChild(bottomSpan);
+        followerContainer.appendChild(digitElement);
+      }
+
+      currentFollowers = newCount;
+    }
+
+    // Fetch profile info and follower count based on username
+    async function fetchProfileInfo() {
+      const username = document.getElementById('username').value;
+      if (!username) {
+        alert("Please enter a username.");
+        return;
+      }
+
+      const profileUrl = `https://wecreating1.wixsite.com/wecreating/profile/${username}/profile`;
+
+      try {
+        const followerResponse = await fetch(`http://localhost:3000/followers?username=${username}`);
+        const followerData = await followerResponse.json();
+        
+        // Update follower count
+        updateFollowerCount(followerData.followers);
+        usernameDisplayElement.textContent = `${username}'s Live Follower Count:`;
+        followersCountDisplay.textContent = `Followers: ${followerData.followers}`;
+      } catch (error) {
+        console.error("Error fetching profile info:", error);
+      }
+    }
+
+    // Event listener for button click
+    document.getElementById('getFollowerCountBtn').addEventListener('click', fetchProfileInfo);
+
+    // Event listener for pressing Enter inside the username input field
+    document.getElementById('username').addEventListener('keypress', function(event) {
+      if (event.key === 'Enter') {
+        fetchProfileInfo();
+      }
+    });
+  </script>
+</body>
+</html>
