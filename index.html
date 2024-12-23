@@ -169,7 +169,7 @@
       }
 
       const profileUrl = `https://wecreating1.wixsite.com/wecreating/profile/${username}/profile`;
-      document.title = "${username} | WeCreating Live Follower Count";
+      document.title = `${username} | WeCreating Live Follower Count`;
       try {
         const followerResponse = await fetch(`http://localhost:3000/followers?username=${username}`);
         const followerData = await followerResponse.json();
