@@ -180,6 +180,7 @@
         followersCountDisplay.textContent = `Followers: ${followerData.followers}`;
       } catch (error) {
         console.error("Error fetching profile info:", error);
+        updateFollowerCount("error");
       }
     }
 
