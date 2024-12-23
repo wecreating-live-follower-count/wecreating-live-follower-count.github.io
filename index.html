@@ -103,7 +103,7 @@
   <button id="getFollowerCountBtn" style="cursor: pointer;">Get Follower Count</button>
 
   <!-- Audio element for the sound -->
-  <audio id="followerSound" src="files/super-mario-coin-sound.mp3" preload="auto"></audio>
+  <audio id="followerSound" src="https://wecreating-live-follower-count.github.io/files/super-mario-coin-sound.mp3" preload="auto"></audio>
 
   <script>
     const followerContainer = document.getElementById('followerContainer');
@@ -139,7 +139,8 @@
           setTimeout(() => {
             topSpan.style.transform = "rotateX(-90deg)";
             bottomSpan.style.transform = "rotateX(0deg)";
-          }, 50); // Add delay for smoothness
+          }, 50);
+          followerSound.play();// Add delay for smoothness
         } else {
           topSpan.textContent = newDigit;
           bottomSpan.textContent = newDigit;
@@ -154,7 +155,7 @@
 
       // Play the sound if the follower count increases
       if (parseInt(newCount) > parseInt(currentFollowers)) {
-        followerSound.play();
+        
       }
 
       currentFollowers = newCount;
