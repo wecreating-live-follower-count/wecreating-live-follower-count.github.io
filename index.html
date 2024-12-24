@@ -105,95 +105,97 @@
   <!-- Audio element for the sound -->
   <audio id="followerSound" src="https://wecreating-live-follower-count.github.io/files/super-mario-coin-sound.mp3" preload="auto"></audio>
 
-  <script>
+<script>
     const followerContainer = document.getElementById('followerContainer');
-    const profileImageElement = document.getElementById('profileImage');
     const usernameDisplayElement = document.getElementById('usernameDisplay');
-    const followersCountDisplay = document.getElementById('followersCountDisplay');
+    const followerSound = document.getElementById('followerSound');
     let currentFollowers = "0";
-    const followerSound = document.getElementById('followerSound'); // Audio element
+    let updateInterval; // Variable to store the interval ID
 
-    // Function to render digits with animation
     function updateFollowerCount(newCount) {
-      const newCountStr = newCount.toString();
-      const oldCountStr = currentFollowers.toString().padStart(newCountStr.length, "0");
+        const newCountStr = newCount.toString();
+        const oldCountStr = currentFollowers.toString().padStart(newCountStr.length, "0");
 
-      followerContainer.innerHTML = ""; // Clear existing digits
+        followerContainer.innerHTML = ""; // Clear existing digits
 
-      for (let i = 0; i < newCountStr.length; i++) {
-        const newDigit = newCountStr[i];
-        const oldDigit = oldCountStr[i];
+        for (let i = 0; i < newCountStr.length; i++) {
+            const newDigit = newCountStr[i];
+            const oldDigit = oldCountStr[i];
 
-        const digitElement = document.createElement("div");
-        digitElement.className = "digit";
+            const digitElement = document.createElement("div");
+            digitElement.className = "digit";
 
-        const topSpan = document.createElement("span");
-        const bottomSpan = document.createElement("span");
+            const topSpan = document.createElement("span");
+            const bottomSpan = document.createElement("span");
 
-        topSpan.className = "top";
-        bottomSpan.className = "bottom";
+            topSpan.className = "top";
+            bottomSpan.className = "bottom";
 
-        if (newDigit !== oldDigit) {
-          topSpan.textContent = oldDigit;
-          bottomSpan.textContent = newDigit;
-          setTimeout(() => {
-            topSpan.style.transform = "rotateX(-90deg)";
-            bottomSpan.style.transform = "rotateX(0deg)";
-          }, 50); // Add delay for smoothness
-        } else {
-          topSpan.textContent = newDigit;
-          bottomSpan.textContent = newDigit;
-          topSpan.style.transform = "rotateX(0deg)";
-          bottomSpan.style.transform = "rotateX(-90deg)";
+            if (newDigit !== oldDigit) {
+                topSpan.textContent = oldDigit;
+                bottomSpan.textContent = newDigit;
+                setTimeout(() => {
+                    topSpan.style.transform = "rotateX(-90deg)";
+                    bottomSpan.style.transform = "rotateX(0deg)";
+                }, 50);
+            } else {
+                topSpan.textContent = newDigit;
+                bottomSpan.textContent = newDigit;
+                topSpan.style.transform = "rotateX(0deg)";
+                bottomSpan.style.transform = "rotateX(-90deg)";
+            }
+
+            digitElement.appendChild(topSpan);
+            digitElement.appendChild(bottomSpan);
+            followerContainer.appendChild(digitElement);
         }
 
-        digitElement.appendChild(topSpan);
-        digitElement.appendChild(bottomSpan);
-        followerContainer.appendChild(digitElement);
-      }
+        if (parseInt(newCount) > parseInt(currentFollowers)) {
+            followerSound.play();
+        }
 
-      // Play the sound if the follower count increases
-      if (parseInt(newCount) > parseInt(currentFollowers)) {
-        followerSound.play();
-      }
-
-      currentFollowers = newCount;
+        currentFollowers = newCount;
     }
 
-    // Fetch profile info and follower count based on username
     async function fetchProfileInfo() {
-      const username = document.getElementById('username').value;
-      if (!username) {
-        alert("Please enter a username.");
-        return;
-      }
+        const username = document.getElementById('username').value.trim();
+        if (!username) {
+            alert("Please enter a username.");
+            clearInterval(updateInterval); // Stop updating if no username
+            return;
+        }
 
-      const profileUrl = `https://wecreating1.wixsite.com/wecreating/profile/${username}/profile`;
-      document.title = `${username} | WeCreating Live Follower Count`;
-      try {
-        const followerResponse = await fetch(`https://redesigned-octo-enigma-production.up.railway.app/followers?username=${username}`);
-        const followerData = await followerResponse.json();
-        
-        // Update follower count
-        updateFollowerCount(followerData.followers);
-        usernameDisplayElement.textContent = `${username}'s Live Follower Count:`;
-        //followersCountDisplay.textContent = `Followers: ${followerData.followers}`;
-      } catch (error) {
-        console.error("Error fetching profile info:", error);
-        updateFollowerCount("error");
-      }
+        const profileUrl = `https://wecreating1.wixsite.com/wecreating/profile/${username}/profile`;
+        document.title = `${username} | WeCreating Live Follower Count`;
+        try {
+            const followerResponse = await fetch(`https://redesigned-octo-enigma-production.up.railway.app/followers?username=${username}`);
+            const followerData = await followerResponse.json();
+
+            updateFollowerCount(followerData.followers);
+            usernameDisplayElement.textContent = `${username}'s Live Follower Count:`;
+        } catch (error) {
+            console.error("Error fetching profile info:", error);
+            updateFollowerCount("error");
+        }
     }
 
-    // Event listener for button click
-    document.getElementById('getFollowerCountBtn').addEventListener('click', fetchProfileInfo);
+    // Event listener for the button click
+    document.getElementById('getFollowerCountBtn').addEventListener('click', () => {
+        clearInterval(updateInterval); // Clear any existing interval
+        fetchProfileInfo(); // Fetch immediately
+        updateInterval = setInterval(fetchProfileInfo, 2000); // Start auto-updating
+    });
 
     // Event listener for pressing Enter inside the username input field
-    document.getElementById('username').addEventListener('keypress', function(event) {
-      if (event.key === 'Enter') {
-        fetchProfileInfo();
-      }
+    document.getElementById('username').addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+            clearInterval(updateInterval); // Clear any existing interval
+            fetchProfileInfo(); // Fetch immediately
+            updateInterval = setInterval(fetchProfileInfo, 2000); // Start auto-updating
+        }
     });
-  </script>
+</script>
+
 
   <footer>
     <p>This site is unofficial and not affiliated with WeCreating.</p>
