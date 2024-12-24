@@ -177,7 +177,7 @@
         // Update follower count
         updateFollowerCount(followerData.followers);
         usernameDisplayElement.textContent = `${username}'s Live Follower Count:`;
-        followersCountDisplay.textContent = `Followers: ${followerData.followers}`;
+        //followersCountDisplay.textContent = `Followers: ${followerData.followers}`;
       } catch (error) {
         console.error("Error fetching profile info:", error);
         updateFollowerCount("error");
