@@ -104,11 +104,13 @@
 
   <!-- Audio element for the sound -->
   <audio id="followerSound" src="https://wecreating-live-follower-count.github.io/files/super-mario-coin-sound.mp3" preload="auto"></audio>
+  <audio id="followerLoseSound" src="https://wecreating-live-follower-count.github.io/files/classic_hurt.mp3" preload="auto"></audio>
 
 <script>
     const followerContainer = document.getElementById('followerContainer');
     const usernameDisplayElement = document.getElementById('usernameDisplay');
     const followerSound = document.getElementById('followerSound');
+    const followerLoseSound = document.getElementById('followerLoseSound');
     let currentFollowers = "0";
     let updateInterval; // Variable to store the interval ID
 
@@ -152,6 +154,8 @@
 
         if (parseInt(newCount) > parseInt(currentFollowers)) {
             followerSound.play();
+        }else if(parseInt(newCount) < pareInt(currentFollowers)){
+            followerLoseSound.play();
         }
 
         currentFollowers = newCount;
